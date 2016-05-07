@@ -1,15 +1,12 @@
 #-*- coding: utf-8 -*-
-__author__ = 'RStone'
 
 import re
-import urllib
 import requests
 
-#下载网页
+下载网页
 def getHtml(url):
-    html1 = urllib.urlopen(url)
-    html = html1.read()
-    # html = requests.get(url)
+    html = requests.get(url)
+    html = html.text()
     return html
 
 #获取书名
@@ -30,7 +27,7 @@ def getTranslator(html):
         if re.search("译者",matchExist):
             translator = re.findall('<span class="labeled-text"><a class="author-item" href=".*?">(.*?)</a>',matchExist,re.S)
         else:
-            translator = '无译者'.decode('utf8')
+            translator = '无译者'
         translatorList.append(translator)
         continue
     return translatorList
@@ -59,10 +56,10 @@ def getCover(html,bookName,j = 0):
     i = 0
     urlOfPic = re.findall('<img width="110px" height="164px" src="(.*?)" alt="" itemprop="image"></a></div>',html,re.S)
     for name in bookName:
-        name = "、"+name + ".jpg"
+        name = "、".decode('utf-8')+name + ".jpg".decode('utf-8')
         img = requests.get(urlOfPic[i],stream=True).content
-        print 'downloading..' + name.decode('utf8')
-        with open("c:\\douban_download\\"+str(j)+name.decode('utf8'),'wb') as jpg:
+        print 'downloading..' + name
+        with open("c:\\douban_download\\"+str(j)+name,'wb') as jpg:
             jpg.write(img)
             i = i + 1
             j = j + 1
@@ -76,12 +73,12 @@ html = getHtml(url)
 numOfBook = 0
 for name in getName(html):
     numOfBook = numOfBook + 1
-    print name.decode('utf8'),numOfBook
+    print name,numOfBook
 
 numOfAuthor = 0
 for author in getAuthor(html):
     numOfAuthor = numOfAuthor + 1
-    print author.decode('utf8'),numOfAuthor
+    print author,numOfAuthor
 
 
 numOfTranslator = 0
@@ -89,7 +86,7 @@ for Translator in getTranslator(html):
     numOfTranslator = numOfTranslator + 1
     if type(Translator) == list:
         for j in Translator:
-            print j.decode('utf8'),
+            print j
         print numOfTranslator
     else:
         print Translator,numOfTranslator
@@ -102,9 +99,9 @@ getCover(html,getName(html))
 numOfClass = 0
 for BookClass in getClass(html):
         numOfClass = numOfClass + 1
-        print BookClass.decode('utf8'),numOfClass
+        print BookClass,numOfClass
 
 numOfIntro = 0
 for BookIntroduction in getIntroduction(html):
     numOfIntro = numOfIntro + 1
-    print BookIntroduction.decode('utf8'),numOfIntro
+    print BookIntroduction,numOfIntro
